@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三角洲行动干员性格适配度测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, rgba(255,107,53,0.15) 0%, transparent 100%);
+            border-bottom: 2px solid rgba(255,107,53,0.3);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            text-shadow: 0 0 20px rgba(255,107,53,0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #a0a0a0;
+        }
+
+        .intro-screen, .result-screen {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .intro-screen h2, .result-screen h2 {
+            color: #ff6b35;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .intro-screen p {
+            margin-bottom: 15px;
+            color: #c0c0c0;
+        }
+
+        .operators-intro {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .operator-badge {
+            background: rgba(255,107,53,0.1);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #ff6b35;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255,107,53,0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.6);
+        }
+
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .quiz-container {
+            display: none;
+        }
+
+        .quiz-container.active {
+            display: block;
+        }
+
+        .question-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            color: #ff6b35;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 25px;
+            color: #fff;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: rgba(255,107,53,0.1);
+            border-color: rgba(255,107,53,0.5);
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+
+        .option-letter {
+            width: 35px;
+            height: 35px;
+            background: rgba(255,107,53,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff6b35;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ff6b35, #ff8c5a);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .result-screen {
+            display: none;
+        }
+
+        .result-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .match-result {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .matched-operator {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(255,107,53,0.5);
+        }
+
+        .operator-image {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(255,107,53,0.2), rgba(255,107,53,0.05));
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            border: 3px solid rgba(255,107,53,0.5);
+        }
+
+        .operator-desc {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .operator-desc h3 {
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .operator-desc p {
+            color: #b0b0b0;
+            margin-bottom: 10px;
+        }
+
+        .compatibility-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .compatibility-fill {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .compatibility-text {
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .secondary-matches {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .secondary-matches h3 {
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .scrollable-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .scrollable-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scrollable-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: rgba(255,107,53,0.3);
+            border-radius: 10px;
+        }
+        
+        .scrollable-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,107,53,0.5);
+        }
+        
+        .secondary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .secondary-item:hover {
+            background: rgba(255,107,53,0.05);
+            transform: translateX(5px);
+        }
+
+        .secondary-name {
+            color: #fff;
+        }
+
+        .secondary-percent {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: rgba(255,107,53,0.5);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .question-text {
+                font-size: 1.1em;
+            }
+            .matched-operator {
+                font-size: 1.8em;
+            }
+            .intro-screen, .result-screen {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>三角洲行动</h1>
+            <p>干员性格适配度测试</p>
+        </header>
+
+        <div class="intro-screen" id="introScreen">
+            <h2>欢迎来到干员适配度测试</h2>
+            <p>本测试包含 <strong>50道</strong> 性格测试题，通过测试结果将为你匹配最适合你的三角洲行动干员。</p>
+            <p>测试将评估你的性格特点，包括：</p>
+            <ul style="margin: 15px 0 15px 30px; color: #b0b0b0;">
+                <li>行动风格（冲动 vs 冷静）</li>
+                <li>团队角色（领导 vs 辅助）</li>
+                <li>战斗偏好（进攻 vs 防守）</li>
+                <li>风险态度（冒险 vs 稳健）</li>
+                <li>社交倾向（独立 vs 协作）</li>
+            </ul>
+            <p style="margin-top: 20px; color: #888; font-size: 0.9em;">
+                共涵盖15位干员：红狼、无名、威龙、露娜、银翼、骇爪、牧羊人、乌鲁鲁、深蓝、比特、蜂医、蛊、蝶、疾风、赛伊德
+            </p>
+            <button class="btn" onclick="startTest()">开始测试</button>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">题目 1 / 40</div>
+            
+            <div class="question-card" id="questionCard">
+                <div class="question-number" id="questionNumber">问题 1</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <div class="navigation-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">下一题</button>
+            </div>
+        </div>
+
+        <div class="result-screen" id="resultScreen">
+            <h2>测试结果</h2>
+            <div class="match-result">
+                <div class="operator-image" id="resultIcon"></div>
+                <div class="matched-operator" id="matchedOperator"></div>
+                <div class="compatibility-text" id="compatibilityText"></div>
+                <div class="compatibility-bar">
+                    <div class="compatibility-fill" id="compatibilityFill"></div>
+                </div>
+            </div>
+            
+            <div class="operator-desc">
+                <h3>干员介绍</h3>
+                <p id="operatorDesc"></p>
+                <p id="operatorPersonality"></p>
+            </div>
+
+            <div class="secondary-matches">
+                <h3>所有干员适配度</h3>
+                <div id="secondaryMatches" class="scrollable-list"></div>
+            </div>
+
+            <button class="btn" onclick="restartTest()">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        var operators = {
+            redWolf: {
+                name: "红狼",
+                icon: "🐺",
+                desc: "红狼凯·席尔瓦是GTI的突击型干员，定位正面突击、机动收割。配备动力外骨骼，能够短时间提升移速和近战伤害，击杀后可回血，提升持续作战能力。",
+                personality: "性格热血、直接、勇猛，喜欢正面交锋，不惧挑战。具有强烈的领袖气质，是团队中的突击先锋。适合新手，适合正面刚枪、快速突进与残局收割。",
+                traits: { attack: 10, calm: 3, leader: 9, risk: 10, independent: 6, stealth: 2, support: 3 }
+            },
+            unknown: {
+                name: "无名",
+                icon: "🎭",
+                desc: "无名埃利·德·蒙贝尔是突击型干员，定位潜行突袭、信息干扰。技能以潜行骚扰为核心，终极技能'寂静无声'可隐身并免疫侦查，适合敌后扰乱与精准刺杀。",
+                personality: "性格神秘、独立，擅长隐藏自身行踪。喜欢独自行动，从背后给予敌人致命一击。适合复杂地形偷袭和单兵绕后。",
+                traits: { attack: 7, calm: 8, leader: 3, risk: 7, independent: 10, stealth: 9, support: 2 }
+            },
+            weilong: {
+                name: "威龙",
+                icon: "🐉",
+                desc: "威龙王宇昊是突击型干员，定位突击尖兵、机动控场、战场尖刀。27岁四川人，前舰载机飞行员，后转为GTI突击干员。配备动力推进、虎蹲炮和磁吸炸弹，高空坠落无伤害。",
+                personality: "性格勇猛、直接，擅长近身作战。喜欢快速突击，打敌人一个措手不及。适合快速抢占点位、控场开团和复杂立体地形作战。",
+                traits: { attack: 9, calm: 4, leader: 7, risk: 8, independent: 7, stealth: 3, support: 4 }
+            },
+            luna: {
+                name: "露娜",
+                icon: "🌙",
+                desc: "露娜金卢娜是侦察型干员，定位战场侦察、远程控场。擅长使用侦察箭矢标记敌人、电击箭矢控场，具有敌情分析能力，提升团队信息获取效率。",
+                personality: "性格冷静、敏锐，擅长观察和分析。攻防一体结合，能够在侦察的同时进行有效打击。适合远程标记、电击控场，配合工程干员形成控场链。",
+                traits: { attack: 6, calm: 9, leader: 5, risk: 4, independent: 8, stealth: 5, support: 6 }
+            },
+            silverwing: {
+                name: "银翼",
+                icon: "🦅",
+                desc: "银翼是侦察型干员，定位极致侦察、区域预警。配备侦察无人机和声波探测装置，被动'闻脚气'可精准定位敌方，提供高空视野。",
+                personality: "性格冷静、谨慎，擅长收集和分析情报。喜欢从高处观察战场，为团队提供全面的情报支持。是'鸟人流'战术核心，克制潜行干员。",
+                traits: { attack: 3, calm: 10, leader: 6, risk: 2, independent: 7, stealth: 6, support: 8 }
+            },
+            terror: {
+                name: "骇爪",
+                icon: "🕷️",
+                desc: "骇爪麦晓雯是侦察型干员，定位电子侦察、静默渗透、反制电子设备。配备信号破译器、闪光巡飞器和数据飞刀，具有隐匿消声能力。",
+                personality: "性格谨慎、聪慧，擅长收集和分析情报。喜欢在暗处观察，等待最佳出击时机。适合开局探点、排查陷阱、反制工程/电子干员。",
+                traits: { attack: 4, calm: 9, leader: 5, risk: 4, independent: 9, stealth: 8, support: 5 }
+            },
+            shepherd: {
+                name: "牧羊人",
+                icon: "🛡️",
+                desc: "牧羊人泰瑞·缪萨是工程型干员，定位室内防守、陷阱控场。擅长声波陷阱和防御工事，具有减振防御能力，降低爆炸伤害。",
+                personality: "性格沉稳可靠、冷静理性，擅长分析局势并做出最佳防守决策。是团队中值得信赖的防御核心。室内守点神器，楼梯/门口布陷阱，形成'进门即残'压制网。",
+                traits: { attack: 3, calm: 10, leader: 6, risk: 2, independent: 5, stealth: 3, support: 7 }
+            },
+            ururu: {
+                name: "乌鲁鲁",
+                icon: "🗿",
+                desc: "乌鲁鲁大卫·费莱尔是工程型干员，定位工事搭建、区域封锁。配备速凝掩体、巡飞弹和复合型燃烧弹，具有久经沙场能力，抗骨折和减速。",
+                personality: "性格稳重、踏实，是团队的防御基石。不追求个人表现，而是默默守护整个团队。堵桥/守点核心，燃烧弹+掩体强区域压制，适配防守阵容。",
+                traits: { attack: 2, calm: 9, leader: 6, risk: 1, independent: 4, stealth: 2, support: 8 }
+            },
+            deepBlue: {
+                name: "深蓝",
+                icon: "💙",
+                desc: "深蓝阿列克谢·彼得罗夫是工程型干员，定位移动堡垒、前排抗伤。配备全身盾、钩锁和防爆套装，具有范围防御Buff，提升队友生存。",
+                personality: "性格冲动、火爆，爱好使用爆炸物清除一切障碍。需要精准的战术规划才能发挥最大威力。狭窄地形抗压王者，盾牌+钩锁配合队友冲锋，新手易上手。",
+                traits: { attack: 9, calm: 3, leader: 4, risk: 8, independent: 5, stealth: 1, support: 7 }
+            },
+            bite: {
+                name: "比特",
+                icon: "🕷️",
+                desc: "比特拉希德·拉哈尔是工程型干员，定位机械操控、自动防御。配备哨兵蜘蛛'T仔'和巡猎蜘蛛，具有机械协同能力，部署物附近提升武器操控。",
+                personality: "性格冷静、技术型，擅长操控机械装置。喜欢通过自动化设备来增强团队防御能力。自动布防，适合多线防守与阵地战。",
+                traits: { attack: 4, calm: 8, leader: 5, risk: 3, independent: 6, stealth: 4, support: 9 }
+            },
+            doc: {
+                name: "蜂医",
+                icon: "🐝",
+                desc: "蜂医罗伊·斯米是支援型干员，定位团队医疗、续航核心。配备激素枪和蜂巢烟雾弹，具有高效救援能力，缩短50%救援时间，被救者回30%血。",
+                personality: "性格温和、富有同情心，总是把队友的生命放在首位。是团队中不可或缺的守护天使。新手首选，PVE/竞技通用，烟雾分割战场+持续治疗。",
+                traits: { attack: 2, calm: 7, leader: 4, risk: 3, independent: 4, stealth: 2, support: 10 }
+            },
+            venom: {
+                name: "蛊",
+                icon: "🐍",
+                desc: "蛊佐娅·庞琴科娃是支援型干员，定位干扰削弱、区域压制。配备流萤集群无人机和腐蚀装置，具有神经化学干扰能力，持续削弱敌方。",
+                personality: "性格阴险、足智多谋，擅长使用计谋取胜。不是正面硬刚，而是通过控制和对消耗来获胜。团战辅助，配合侦察/工程干员打持续压制。",
+                traits: { attack: 5, calm: 8, leader: 4, risk: 5, independent: 6, stealth: 6, support: 8 }
+            },
+            butterfly: {
+                name: "蝶",
+                icon: "🦋",
+                desc: "蝶莉娜·范德梅尔是支援型干员，定位补给救援、自动医疗。配备医疗无人机和救援无人机，具有补给作战能力，持续团队续航。",
+                personality: "性格温柔、善良，擅长后勤保障和紧急救援。喜欢通过科技手段来保障队友的生命安全。自动救援+持续治疗，适合高难度生存模式。",
+                traits: { attack: 1, calm: 9, leader: 3, risk: 2, independent: 5, stealth: 3, support: 10 }
+            },
+            gust: {
+                name: "疾风",
+                icon: "💨",
+                desc: "疾风是突击型干员，以极高的机动性和速度著称。能够在战场上快速位移，打乱敌方节奏。",
+                personality: "性格急躁、冲动，追求速度和效率。喜欢速战速决，不喜欢拖泥带水。",
+                traits: { attack: 8, calm: 2, leader: 5, risk: 9, independent: 8, stealth: 4, support: 2 }
+            },
+            sayeed: {
+                name: "赛伊德",
+                icon: "⚡",
+                desc: "赛伊德是支援型干员，擅长电子干扰和战场控制。能够干扰敌方通讯和设备，为团队创造战术优势。",
+                personality: "性格冷静、足智多谋，是团队的技术专家。擅长利用各种电子设备来掌控战场节奏。",
+                traits: { attack: 5, calm: 8, leader: 6, risk: 5, independent: 7, stealth: 5, support: 7 }
+            }
+        };
+
+        var questions = [
+            {
+                text: "在团队作战中，你更倾向于？",
+                options: [
+                    { text: "冲锋在前，带领队友取得胜利", traits: { attack: 3, leader: 2, risk: 2 } },
+                    { text: "观察局势，找到最佳出击时机", traits: { calm: 3, independent: 2, stealth: 3 } },
+                    { text: "根据队伍需要灵活调整角色", traits: { calm: 2, leader: 2, support: 1 } },
+                    { text: "在后方支援，保护队友安全", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对突发危险时，你会？",
+                options: [
+                    { text: "立即反击，不给对方机会", traits: { attack: 3, risk: 2 } },
+                    { text: "保持冷静，分析情况再行动", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "第一时间通知队友", traits: { leader: 2, support: 2, calm: 1 } },
+                    { text: "使用技能远程支援", traits: { support: 3, calm: 1, leader: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种战斗风格？",
+                options: [
+                    { text: "正面突击，压制敌人", traits: { attack: 3, leader: 2, risk: 2 } },
+                    { text: "游击骚扰，从侧翼打击", traits: { stealth: 3, independent: 2, attack: 1 } },
+                    { text: "防守反击，等待敌人上钩", traits: { calm: 3, support: 1, leader: 1 } },
+                    { text: "远程支援，掌控全局", traits: { support: 3, leader: 1, calm: 2 } }
+                ]
+            },
+            {
+                text: "在游戏中，你更看重什么？",
+                options: [
+                    { text: "个人表现，拿到最高击杀", traits: { attack: 3, independent: 2 } },
+                    { text: "生存能力，活着最重要", traits: { calm: 2, independent: 2, stealth: 1 } },
+                    { text: "游戏体验，享受过程", traits: { calm: 3, support: 1, leader: 1 } },
+                    { text: "团队胜利，配合队友获胜", traits: { support: 3, leader: 2, calm: 1 } }
+                ]
+            },
+            {
+                text: "如果你的队友陷入危险，你会？",
+                options: [
+                    { text: "毫不犹豫地冲上去救援", traits: { attack: 3, leader: 2, risk: 2 } },
+                    { text: "先观察环境，确保安全再救", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "呼叫其他队友一起支援", traits: { leader: 3, support: 1, calm: 1 } },
+                    { text: "使用技能远程支援", traits: { support: 3, calm: 1, leader: 1 } }
+                ]
+            },
+            {
+                text: "你擅长什么样的作战环境？",
+                options: [
+                    { text: "开阔地带，正面对决", traits: { attack: 3, risk: 2, leader: 1 } },
+                    { text: "复杂地形，隐蔽行动", traits: { stealth: 3, independent: 2, calm: 2 } },
+                    { text: "城市巷战，灵活位移", traits: { calm: 2, leader: 2, support: 1 } },
+                    { text: "防守点位，坚守阵地", traits: { support: 3, calm: 2, leader: 1 } }
+                ]
+            },
+            {
+                text: "你通常如何制定作战计划？",
+                options: [
+                    { text: "随机应变，见机行事", traits: { attack: 2, risk: 3, independent: 1 } },
+                    { text: "提前规划好每一步", traits: { calm: 3, stealth: 1, independent: 2 } },
+                    { text: "根据实际情况灵活调整", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "跟随队伍，听从指挥", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在团队中，你更愿意承担什么角色？",
+                options: [
+                    { text: "先锋，冲在最前面", traits: { attack: 3, risk: 2, leader: 1 } },
+                    { text: "观察者，提供情报支持", traits: { stealth: 3, independent: 2, calm: 2 } },
+                    { text: "领袖，带领团队走向胜利", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "支援者，保护队友周全", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你对待失败的态度是？",
+                options: [
+                    { text: "换一种方式再尝试", traits: { attack: 2, risk: 2, independent: 1 } },
+                    { text: "分析原因，提升实力", traits: { calm: 3, stealth: 1, independent: 1 } },
+                    { text: "总结经验，下次再来", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "寻求队友帮助，共同进步", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢什么样的对手？",
+                options: [
+                    { text: "强大的对手，挑战自我", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "阴险的对手，斗智斗勇", traits: { stealth: 3, calm: 2, independent: 1 } },
+                    { text: "普通的对手，轻松获胜", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "无所谓，关键是团队胜利", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对不确定的情况，你会？",
+                options: [
+                    { text: "勇敢尝试，探索未知", traits: { attack: 2, risk: 3, independent: 1 } },
+                    { text: "谨慎观察，确保安全", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "等待更多信息再做决定", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "询问队友意见", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你认为战斗中最重要的是什么？",
+                options: [
+                    { text: "火力压制，优势火力", traits: { attack: 3, risk: 2, leader: 1 } },
+                    { text: "信息获取，先发制人", traits: { stealth: 3, calm: 2, independent: 1 } },
+                    { text: "防守稳固，不给机会", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "战术配合，团队协作", traits: { support: 3, leader: 2, calm: 1 } }
+                ]
+            },
+            {
+                text: "你如何处理与队友的分歧？",
+                options: [
+                    { text: "坚持自己的观点", traits: { attack: 2, independent: 2, risk: 1 } },
+                    { text: "用行动证明自己是对的", traits: { stealth: 2, independent: 2, calm: 1 } },
+                    { text: "听取对方意见，协商解决", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "服从团队决定", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在紧张的对局中，你通常会？",
+                options: [
+                    { text: "更加兴奋，状态爆发", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "小心谨慎，减少失误", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "保持专注，正常发挥", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "鼓励队友，提升士气", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种武器风格？",
+                options: [
+                    { text: "高伤害，高风险", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "稳定可靠，精准打击", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "灵活多变，适应性强", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "群体伤害，控制战场", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你发现敌人时，你会？",
+                options: [
+                    { text: "立即发起攻击", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "先观察敌情再决定", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "设下陷阱等待敌人", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "通知队友一起围剿", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你如何评价自己的游戏风格？",
+                options: [
+                    { text: "激进强势，主动出击", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "灵活多变，因地制宜", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "稳健保守，步步为营", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队协作，配合默契", traits: { support: 3, leader: 2, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对强大的敌人，你会？",
+                options: [
+                    { text: "正面挑战，证明实力", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "寻找弱点，智取对手", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "暂时撤退，重新部署", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "呼叫队友，合力对抗", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢什么样的游戏模式？",
+                options: [
+                    { text: "个人竞技，展示实力", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "生存模式，策略为王", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "团队竞技，协同作战", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "任何模式都可以享受", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当队友表现不好时，你会？",
+                options: [
+                    { text: "自己多努力弥补", traits: { attack: 2, independent: 2, risk: 1 } },
+                    { text: "默默配合，等待机会", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "指出问题，帮助改进", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "给予鼓励，提升信心", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种地图类型？",
+                options: [
+                    { text: "开阔地图，正面交锋", traits: { attack: 3, risk: 2, leader: 1 } },
+                    { text: "复杂地图，隐蔽作战", traits: { calm: 3, stealth: 3, independent: 2 } },
+                    { text: "中等地图，攻守兼备", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "喜欢各种地图", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在游戏中最让你有成就感的是？",
+                options: [
+                    { text: "拿到最高击杀数", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "完成艰巨的任务目标", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "带领团队走向胜利", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "成功救援濒死的队友", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你通常如何提升自己的实力？",
+                options: [
+                    { text: "多练习，提升操作技术", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "研究攻略，寻找技巧", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "学习战术，增强意识", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "和队友配合，积累经验", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对新的游戏版本，你会？",
+                options: [
+                    { text: "第一时间尝试新内容", traits: { attack: 2, risk: 3, independent: 1 } },
+                    { text: "观察一段时间再决定", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "跟随主流，选择最强", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "按自己习惯来，不受影响", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢什么样的队友？",
+                options: [
+                    { text: "实力强劲，能carry的", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "配合默契，心有灵犀的", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "性格互补，互相学习的", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "任何类型都能适应", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你连续失败时，你会？",
+                options: [
+                    { text: "越挫越勇，继续挑战", traits: { attack: 2, risk: 3, independent: 1 } },
+                    { text: "休息一下，调整心态", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "分析问题，提升技术", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "换种方式，重新开始", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种游戏节奏？",
+                options: [
+                    { text: "快节奏，高爆发", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "慢节奏，稳扎稳打", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "中节奏，攻守平衡", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "随局势变化而变化", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在完成任务时，你会？",
+                options: [
+                    { text: "全力完成，不管其他", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "灵活变通，寻找最优解", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "小心谨慎，防止翻车", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "兼顾团队，确保胜利", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更倾向于哪种战斗意识？",
+                options: [
+                    { text: "进攻意识，主动寻找机会", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "侦察意识，获取信息优势", traits: { calm: 3, stealth: 3, independent: 1 } },
+                    { text: "防守意识，保护自己和队友", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "全局意识，掌控战场节奏", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你发现绝佳机会时，你会？",
+                options: [
+                    { text: "立即抓住，不犹豫", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "先观察情况再行动", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "评估风险再做决定", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "通知队友一起行动", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢什么样的对手挑战？",
+                options: [
+                    { text: "一对一单挑，实力对决", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "以少胜多，展现技术", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "策略对决，斗智斗勇", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队配合，赢得胜利", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你在游戏中最看重什么品质？",
+                options: [
+                    { text: "勇气，敢于冲锋", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "智慧，策略取胜", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "冷静，沉着应对", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队精神，协作配合", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你独自面对多个敌人时，你会？",
+                options: [
+                    { text: "奋力一搏，不是你死就是我活", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "利用地形隐藏自己", traits: { calm: 3, stealth: 3, independent: 1 } },
+                    { text: "边打边撤，寻找机会", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "拖延时间，等待队友支援", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢用什么方式解决问题？",
+                options: [
+                    { text: "直接暴力破解", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "思考最优方案", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "尝试多种方法", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "寻求他人帮助", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在游戏中遇到瓶颈时，你会？",
+                options: [
+                    { text: "反复练习突破自我", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "研究攻略，寻找技巧", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "暂时放下，调整心态", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "请教高手学习方法", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更倾向于哪种行动方式？",
+                options: [
+                    { text: "主动出击，掌握主动权", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "以静制动，后发制人", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "灵活机动，随机应变", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "跟随队伍，协同行动", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你如何看待游戏中的风险？",
+                options: [
+                    { text: "高风险高回报，喜欢冒险", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "评估后再决定是否冒险", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "稳健行事，避免风险", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "愿意为团队承担风险", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你获得优势时，你会？",
+                options: [
+                    { text: "扩大优势，一鼓作气", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "巩固优势，防止翻盘", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "稳扎稳打，步步为营", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "帮助队友，建立团队优势", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种沟通方式？",
+                options: [
+                    { text: "直接表达自己的想法", traits: { attack: 2, independent: 2, risk: 1 } },
+                    { text: "用行动表达，无需多言", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "理性分析，给出建议", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "听取队友意见再做决定", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对游戏中的挫折，你会？",
+                options: [
+                    { text: "迎难而上，越战越勇", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "分析原因，寻求突破", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "调整策略，重新出发", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "与队友讨论，共同进步", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更看重游戏中的什么能力？",
+                options: [
+                    { text: "战斗能力，能打能拼", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "战术意识，运筹帷幄", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "领导能力，带领团队", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "生存能力，持久作战", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在游戏结束后的复盘中，你更关注？",
+                options: [
+                    { text: "自己的击杀数据", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "对手的表现和策略", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "自己的决策是否正确", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队的配合问题", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你如何看待团队中的分工合作？",
+                options: [
+                    { text: "每个人都应该专注于自己的角色", traits: { attack: 2, independent: 2, risk: 1 } },
+                    { text: "团队成员应该灵活调整分工", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "根据每个人的特长分配任务", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "大家一起行动，共同完成目标", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "面对强大的敌人队伍，你会？",
+                options: [
+                    { text: "直接正面挑战", traits: { attack: 3, risk: 3, independent: 1 } },
+                    { text: "寻找敌人的弱点", traits: { calm: 3, stealth: 3, independent: 1 } },
+                    { text: "制定详细的战术计划", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "与队友紧密配合，逐步推进", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你更喜欢哪种类型的任务？",
+                options: [
+                    { text: "突击任务，快速完成目标", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "侦察任务，收集情报", traits: { calm: 3, stealth: 3, independent: 1 } },
+                    { text: "防御任务，保护重要目标", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "救援任务，帮助队友脱离危险", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在游戏中，你如何处理压力？",
+                options: [
+                    { text: "将压力转化为动力", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "保持冷静，分析局势", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "深呼吸，调整心态", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "与队友沟通，分担压力", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你认为一个优秀的团队应该具备什么特质？",
+                options: [
+                    { text: "强大的个人能力", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "灵活的应变能力", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "清晰的战术规划", traits: { leader: 3, calm: 2, support: 1 } },
+                    { text: "默契的配合", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "当你获得新武器或装备时，你会？",
+                options: [
+                    { text: "立即尝试使用", traits: { attack: 3, risk: 2, independent: 1 } },
+                    { text: "在安全的环境中练习", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "先了解其性能和特点", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "与队友分享使用心得", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "你如何看待游戏中的失败？",
+                options: [
+                    { text: "个人需要提升技术水平", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "失败是成功之母", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "需要分析原因，避免重蹈覆辙", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队需要更加默契的配合", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            },
+            {
+                text: "在游戏中，你更注重什么？",
+                options: [
+                    { text: "个人击杀数", traits: { attack: 3, independent: 2, risk: 1 } },
+                    { text: "战术运用", traits: { calm: 3, stealth: 2, independent: 1 } },
+                    { text: "游戏体验", traits: { leader: 2, calm: 2, support: 1 } },
+                    { text: "团队胜利", traits: { support: 3, leader: 1, calm: 1 } }
+                ]
+            }
+        ];
+
+        var currentQuestion = 0;
+        var userAnswers = [];
+
+        function startTest() {
+            document.getElementById('introScreen').style.display = 'none';
+            document.getElementById('quizContainer').classList.add('active');
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            showQuestion();
+        }
+
+        function showQuestion() {
+            var q = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = '问题 ' + (currentQuestion + 1);
+            document.getElementById('questionText').textContent = q.text;
+            
+            var progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = '题目 ' + (currentQuestion + 1) + ' / ' + questions.length;
+            
+            var optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            var letters = ['A', 'B', 'C', 'D'];
+            for (var i = 0; i < q.options.length; i++) {
+                var option = q.options[i];
+                var optionEl = document.createElement('div');
+                optionEl.className = 'option' + (userAnswers[currentQuestion] === i ? ' selected' : '');
+                optionEl.innerHTML = '<div class="option-letter">' + letters[i] + '</div><div class="option-text">' + option.text + '</div>';
+                optionEl.onclick = (function(index) {
+                    return function() {
+                        selectOption(index);
+                    };
+                })(i);
+                optionsContainer.appendChild(optionEl);
+            }
+            
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? '查看结果' : '下一题';
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            var options = document.querySelectorAll('.option');
+            for (var i = 0; i < options.length; i++) {
+                if (i === index) {
+                    options[i].classList.add('selected');
+                } else {
+                    options[i].classList.remove('selected');
+                }
+            }
+            
+            if (currentQuestion < questions.length - 1) {
+                setTimeout(function() {
+                    currentQuestion++;
+                    showQuestion();
+                }, 200);
+            } else {
+                showResult();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (userAnswers[currentQuestion] === null) {
+                alert('请选择一个答案');
+                return;
+            }
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function calculateResult() {
+            var optionCounts = {
+                A: 0,
+                B: 0,
+                C: 0,
+                D: 0
+            };
+            
+            for (var i = 0; i < userAnswers.length; i++) {
+                var answer = userAnswers[i];
+                if (answer !== null) {
+                    if (answer === 0) optionCounts.A++;
+                    else if (answer === 1) optionCounts.B++;
+                    else if (answer === 2) optionCounts.C++;
+                    else if (answer === 3) optionCounts.D++;
+                }
+            }
+            
+            var results = [];
+            for (var key in operators) {
+                var operator = operators[key];
+                var score = 0;
+                
+                score += (optionCounts.A / 50) * (operator.traits.attack || 0) * 10;
+                score += (optionCounts.B / 50) * (operator.traits.stealth || 0) * 10;
+                score += (optionCounts.C / 50) * (operator.traits.leader || 0) * 10;
+                score += (optionCounts.D / 50) * (operator.traits.support || 0) * 10;
+                
+                var percentage = Math.round(score);
+                percentage = Math.max(0, Math.min(100, percentage));
+                
+                results.push({ key: key, percentage: percentage });
+            }
+            
+            results.sort(function(a, b) {
+                return b.percentage - a.percentage;
+            });
+            
+            return results;
+        }
+
+        function showResult() {
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
+            var results = calculateResult();
+            var bestMatch = results[0];
+            var operator = operators[bestMatch.key];
+            
+            document.getElementById('resultIcon').textContent = operator.icon;
+            document.getElementById('matchedOperator').textContent = operator.name;
+            document.getElementById('compatibilityText').textContent = '适配度: ' + bestMatch.percentage + '%';
+            document.getElementById('compatibilityFill').style.width = bestMatch.percentage + '%';
+            document.getElementById('operatorDesc').textContent = operator.desc;
+            document.getElementById('operatorPersonality').textContent = operator.personality;
+            
+            var secondaryContainer = document.getElementById('secondaryMatches');
+            secondaryContainer.innerHTML = '';
+            
+            for (var i = 1; i < results.length; i++) {
+                var result = results[i];
+                var op = operators[result.key];
+                var item = document.createElement('div');
+                item.className = 'secondary-item';
+                item.innerHTML = '<span class="secondary-name">' + op.icon + ' ' + op.name + '</span><span class="secondary-percent">' + result.percentage + '%</span>';
+                secondaryContainer.appendChild(item);
+            }
+        }
+
+        function restartTest() {
+            document.getElementById('resultScreen').classList.remove('active');
+            document.getElementById('introScreen').style.display = 'block';
+            currentQuestion = 0;
+            userAnswers = [];
+        }
+    </script>
+</body>
+</html>
